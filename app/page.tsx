@@ -10,6 +10,7 @@ import Certifications from './components/Certifications'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 import CodeNavigation from './components/CodeNavigation'
+import ChessProfile from './components/ChessProfile'
 
 export default function Home() {
   return (
@@ -24,6 +25,9 @@ export default function Home() {
         <Skills />
         <Projects />
         <Certifications />
+        
+          <ChessProfile />
+    
         <Contact />
       </main>
       <Footer />

@@ -10,7 +10,12 @@ interface CommandHistory {
   timestamp: string;
 }
 
-export default function CodeNavigation() {
+interface CodeNavigationProps {
+  children?: React.ReactNode;
+  title?: string;
+}
+
+export default function CodeNavigation({ children, title }: CodeNavigationProps) {
   const [input, setInput] = useState('')
   const [history, setHistory] = useState<CommandHistory[]>([])
   const [terminalState, setTerminalState] = useState<'full' | 'normal' | 'minimized' | 'micro'>('normal')
@@ -28,11 +33,13 @@ export default function CodeNavigation() {
         '  skills           - View my skills',
         '  projects         - Browse my projects',
         '  contact          - Contact information',
+        '  education        - View education details',
+        '  experience       - View work experience',
+        '  chess            - View chess profile',
+        '  social           - View social links',
         '  goto <section>   - Navigate to section',
-        '  github           - Open GitHub profile',
-        '  linkedin         - Open LinkedIn profile',
         '  minimize         - Minimize terminal',
-        '  maximize         - Toggle maximize terminal',
+        '  maximize         - Maximize terminal',
       ]
     },
     clear: {
@@ -45,52 +52,116 @@ export default function CodeNavigation() {
     about: {
       description: 'About me',
       action: () => [
-        'Full Stack Developer with expertise in:',
-        '• TypeScript/JavaScript',
-        '• React/Next.js',
-        '• Node.js/Express',
-        '• MongoDB/SQL'
+        'Hi! I\'m Abhishek Chaurasia',
+        'A Full Stack Developer passionate about:',
+        '• Building web applications with modern technologies',
+        '• Creating responsive and interactive user interfaces',
+        '• Writing clean and maintainable code',
+        '• Learning new technologies and best practices',
+        '',
+        'Type "skills" to see my technical skills!'
       ]
     },
-    github: {
-      description: 'Open GitHub profile',
+    skills: {
+      description: 'View my skills',
       action: () => {
-        window.open('https://github.com/Abhithecoder03', '_blank')
-        return ['Opening GitHub profile...']
+        document.getElementById('skills')?.scrollIntoView({ behavior: 'smooth' })
+        return ['Navigating to skills section...']
       }
     },
-    linkedin: {
-      description: 'Open LinkedIn profile',
+    projects: {
+      description: 'Browse my projects',
       action: () => {
-        window.open('https://www.linkedin.com/in/abhichaurasia03/', '_blank')
-        return ['Opening LinkedIn profile...']
+        document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })
+        return ['Navigating to projects section...']
+      }
+    },
+    contact: {
+      description: 'Contact information',
+      action: () => [
+        'Email: abhishek03chaurasia@gmail.com',
+        'LinkedIn: abhichaurasia03',
+        'GitHub: Abhithecoder03',
+        '',
+        'Type "social" to view social media links!'
+      ]
+    },
+    social: {
+      description: 'View social links',
+      action: () => [
+        'Social Media Links:',
+        '• GitHub: https://github.com/Abhithecoder03',
+        '• LinkedIn: https://linkedin.com/in/abhichaurasia03',
+        '• Chess.com: https://chess.com/member/TheAbhiChess'
+      ]
+    },
+    education: {
+      description: 'View education details',
+      action: () => {
+        document.getElementById('education')?.scrollIntoView({ behavior: 'smooth' })
+        return ['Navigating to education section...']
+      }
+    },
+    experience: {
+      description: 'View work experience',
+      action: () => {
+        document.getElementById('experience')?.scrollIntoView({ behavior: 'smooth' })
+        return ['Navigating to experience section...']
+      }
+    },
+    chess: {
+      description: 'View chess profile',
+      action: () => {
+        document.getElementById('chess')?.scrollIntoView({ behavior: 'smooth' })
+        return ['Navigating to chess profile...']
+      }
+    },
+    goto: {
+      description: 'Navigate to section',
+      action: (args: string[]) => {
+        const section = args[1]
+        const element = document.getElementById(section)
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' })
+          return [`Navigating to ${section} section...`]
+        }
+        return [`Section '${section}' not found. Available sections: home, skills, projects, experience, education, chess, contact`]
+      }
+    },
+    minimize: {
+      description: 'Minimize terminal',
+      action: () => {
+        setTerminalState('minimized')
+        return ['Terminal minimized. Click the terminal icon to restore.']
+      }
+    },
+    maximize: {
+      description: 'Toggle maximize terminal',
+      action: () => {
+        setTerminalState(prev => prev === 'full' ? 'normal' : 'full')
+        return ['Terminal size toggled.']
       }
     }
   }
 
   const handleCommand = (cmd: string) => {
-    const timestamp = new Date().toLocaleTimeString()
     const args = cmd.toLowerCase().trim().split(' ')
     const command = args[0]
 
-    let output: string[] = []
-
-    if (command === 'goto') {
-      const section = args[1]
-      const element = document.getElementById(section)
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' })
-        output = [`Navigating to ${section} section...`]
-      } else {
-        output = [`Section '${section}' not found. Try: home, skills, projects, contact`]
-      }
-    } else if (command in commands) {
-      output = commands[command as keyof typeof commands].action()
+    if (command in commands) {
+      const output = commands[command as keyof typeof commands].action(args)
+      setHistory(prev => [...prev, {
+        command: cmd,
+        output,
+        timestamp: new Date().toLocaleTimeString()
+      }])
     } else if (command) {
-      output = [`Command not found: ${command}. Type 'help' for available commands.`]
+      setHistory(prev => [...prev, {
+        command: cmd,
+        output: [`Command not found: ${command}. Type 'help' for available commands.`],
+        timestamp: new Date().toLocaleTimeString()
+      }])
     }
-
-    setHistory(prev => [...prev, { command: cmd, output, timestamp }])
     setInput('')
   }
 
