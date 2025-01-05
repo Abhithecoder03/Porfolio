@@ -1,8 +1,11 @@
-let userConfig = undefined
+let userConfig = null;
+
 try {
-  userConfig = await import('./v0-user-next.config')
+  // Dynamically import the user-specific configuration file
+  userConfig = await import('./v0-user-next.config');
 } catch (e) {
-  // ignore error
+  // Log the error or silently ignore, based on your preference
+  console.warn("Custom user config not found, using default config.");
 }
 
 /** @type {import('next').NextConfig} */
@@ -21,28 +24,36 @@ const nextConfig = {
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
   },
+};
+
+// Merge the userConfig into nextConfig if available
+if (userConfig) {
+  mergeConfig(nextConfig, userConfig);
 }
 
-mergeConfig(nextConfig, userConfig)
-
+/**
+ * Merges the user configuration into the nextConfig object.
+ * @param {Object} nextConfig - The default Next.js config.
+ * @param {Object} userConfig - The user-supplied config to merge.
+ */
 function mergeConfig(nextConfig, userConfig) {
-  if (!userConfig) {
-    return
-  }
-
   for (const key in userConfig) {
-    if (
-      typeof nextConfig[key] === 'object' &&
-      !Array.isArray(nextConfig[key])
-    ) {
-      nextConfig[key] = {
-        ...nextConfig[key],
-        ...userConfig[key],
+    if (userConfig.hasOwnProperty(key)) {
+      // If the property in nextConfig is an object and not an array, merge them.
+      if (
+        typeof nextConfig[key] === 'object' &&
+        !Array.isArray(nextConfig[key]) &&
+        nextConfig[key] !== null
+      ) {
+        nextConfig[key] = {
+          ...nextConfig[key],
+          ...userConfig[key],
+        };
+      } else {
+        nextConfig[key] = userConfig[key];
       }
-    } else {
-      nextConfig[key] = userConfig[key]
     }
   }
 }
 
-export default nextConfig
+export default nextConfig;
