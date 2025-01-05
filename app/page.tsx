@@ -1,7 +1,7 @@
 import Header from './components/Header'
 import Hero from './components/Hero'
 import Terminal from './components/Terminal'
-import CodeEditor from './components/CodeEditor'
+
 import Education from './components/Education'
 import Experience from './components/Experience'
 import Skills from './components/Skills'
@@ -18,7 +18,7 @@ export default function Home() {
       <main className="container mx-auto px-4 py-20">
         <Hero />
         <Terminal />
-        <CodeEditor />
+      
         <Education />
         <Experience />
         <Skills />
