@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@keyframes blink {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.animate-blink {
+  animation: blink 1s infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3c3c3c;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #525252;
+}
+
+/* Syntax highlighting */
+.token.comment {
+  color: #6a9955;
+}
+
+.token.string {
+  color: #ce9178;
+}
+
+.token.number {
+  color: #b5cea8;
+}
+
+.token.keyword {
+  color: #569cd6;
+}
+
+.token.function {
+  color: #dcdcaa;
+}
+
